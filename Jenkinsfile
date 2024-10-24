@@ -23,6 +23,17 @@ pipeline {
                 bat 'gitleaks detect --source . --report-format json --report-path gitleaks-report.json'
             }
         }
+        stage('Analyze Secrets Report') {
+            steps {
+                script {
+                  def report = readFile(’gitleaks-report.json’)
+                     if (report.contains(’leak’)) {
+                    error ’Secrets détectés ! Le build est arrêté.’
+            }
+        }
+
+            }
+        }
 
         // 4. Analyse du rapport de sécurité des secrets
         stage('Analyze Secrets Report') {
